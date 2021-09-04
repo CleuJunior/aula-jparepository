@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -32,5 +33,23 @@ public class UserController {
         Page<User> usersResultsPageable = userRepository.findAll(pageable);
 
         return ResponseEntity.ok(usersResultsPageable);
+    }
+
+    @GetMapping(value = "/search-salary")
+    public ResponseEntity<Page<User>> searchBySalary(
+            @RequestParam(defaultValue = "0") Double minSalary,
+            @RequestParam(defaultValue = "1000000000000") Double maxSalary,
+            Pageable pageable) {
+        Page<User> result = userRepository.findBySalaryBetween(minSalary, maxSalary, pageable);
+        return ResponseEntity.ok(result);
+    }
+
+
+    @GetMapping(value = "/search-name")
+    public ResponseEntity<Page<User>> searchByName(
+            @RequestParam(defaultValue = "") String name,
+            Pageable pageable) {
+        Page<User> result = userRepository.findByNameContainingIgnoreCase(name, pageable);
+        return ResponseEntity.ok(result);
     }
 }
